@@ -1,0 +1,84 @@
+@use "../styles/generals.scss";
+
+.title {
+	font-size: var(--tx-size-title);
+	margin-block: 0rem;
+	line-height: 1.15;
+}
+
+.description {
+	font-size: var(--tx-size-subtitle);
+	margin-block: 0rem 1rem;
+	line-height: 1.5;
+}
+
+.form {
+	display: grid;
+	gap: 0.5rem;
+	font-weight: 300;
+}
+
+.button {
+	width: fit-content;
+	font-weight: 400;
+}
+
+.textarea-message {
+	& div {
+		align-items: flex-start;
+		margin-block: 15px;
+	}
+	& textarea {
+		font-weight: 300;
+	}
+}
+
+.action-icon {
+	height: 5rem;
+	width: 5rem;
+	border-radius: 50%;
+	padding: 0;
+	& svg {
+		position: relative;
+		right: -3px;
+		top: -2px;
+		height: 2rem;
+		width: 2rem;
+		transform: rotate(-45deg);
+	}
+}
+
+.table {
+	margin-block: 1.5rem;
+}
+
+.comment,
+.guest {
+	margin-block: 0.5rem;
+}
+
+.comment {
+	font-size: var(--tx-size-body);
+	& svg {
+		position: relative;
+		height: 0.6rem;
+		top: -0.4rem;
+		right: 0.2rem;
+		opacity: 0.9;
+	}
+}
+
+.guest {
+	font-size: var(--tx-size-small);
+	color: rgb(84, 84, 84);
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	& .guest-name {
+		color: #000;
+		font-weight: 400;
+	}
+	& .avatar {
+		border-radius: 50%;
+	}
+}
