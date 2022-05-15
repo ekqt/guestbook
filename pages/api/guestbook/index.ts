@@ -3,7 +3,7 @@ import { Client } from "@notionhq/client";
 export default async function handler(req: any, res: any) {
 	if (req.method === "POST") {
 		const data = JSON.parse(req.body);
-		const entry = {
+		const entry: any = {
 			parent: {
 				database_id: `${process.env.NOTION_GUESTBOOK_DATABASE_ID}`,
 			},
