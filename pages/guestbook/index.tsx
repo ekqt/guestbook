@@ -126,7 +126,7 @@ const Guestbook: NextPage = ({ database }: any) => {
 
 	return (
 		<div className={styles.container}>
-			<Meta title={"Guestbook"} description={"Leave a comment below. It could be anything – appreciation, information, wisdom, or even humor. Surprise me!"} url={"/guestbook"} />
+			<Meta title={"Guestbook"} description={"Leave a comment below. It could be anything – appreciation, information, wisdom, or even humor. Surprise me!"} url={"/guestbook"} image={"./guestbook.png"} />
 
 			<main className={styles.main}>
 				<section>
