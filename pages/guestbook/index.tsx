@@ -21,25 +21,16 @@ import Image from "next/image";
 
 import { Alert, Button, Textarea, LoadingOverlay } from "@mantine/core";
 
-import { Table } from "@mantine/core";
+import { Table, ActionIcon } from "@mantine/core";
 
 import {
 	AiOutlineInfoCircle,
 	AiOutlineGoogle,
 	AiOutlineSend,
+	AiOutlineDelete,
 } from "react-icons/ai";
 import { BiMessageSquare } from "react-icons/bi";
 import { FaQuoteLeft } from "react-icons/fa";
-
-// const firebaseConfig = {
-// 	apiKey: "AIzaSyA-aSeNub10Eivj0o70oOv3dBI8FBYKz4U",
-// 	authDomain: "auth-demo-4928e.firebaseapp.com",
-// 	projectId: "auth-demo-4928e",
-// 	storageBucket: "auth-demo-4928e.appspot.com",
-// 	messagingSenderId: "994626472083",
-// 	appId: "1:994626472083:web:eae7fd2238e7147d36a566",
-// 	measurementId: "G-9M5ZR87DB4",
-// };
 
 const firebaseConfig = {
 	apiKey: "AIzaSyDB3a6IbflnLS9kR4aBaXhPSMoReT561zk",
@@ -47,8 +38,8 @@ const firebaseConfig = {
 	projectId: "hector-sosa",
 	storageBucket: "hector-sosa.appspot.com",
 	messagingSenderId: "1021871539855",
-	appId: "1:1021871539855:web:073f2305042bf9e7e412fa"
-  };
+	appId: "1:1021871539855:web:073f2305042bf9e7e412fa",
+};
 
 const app = initializeApp(firebaseConfig);
 const provider = new GoogleAuthProvider();
@@ -136,6 +127,18 @@ const Guestbook: NextPage = ({ database }: any) => {
 		}
 	};
 
+	const handleDelete = async (pageID: string) => {
+		try {
+			await fetcher("/api/guestbook", {
+				method: "DELETE",
+				body: JSON.stringify(pageID),
+			});
+			setEntries(entries.filter((i: any) => i.id !== pageID));
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	return (
 		<div className={styles.container}>
 			<Meta
@@ -172,7 +175,7 @@ const Guestbook: NextPage = ({ database }: any) => {
 								<Alert
 									classNames={{
 										root: styles.alert,
-										icon: styles['alert-icon'],
+										icon: styles["alert-icon"],
 										title: styles["alert-title"],
 									}}
 									icon={<AiOutlineInfoCircle size={16} />}
@@ -310,6 +313,22 @@ const Guestbook: NextPage = ({ database }: any) => {
 													new Date(
 														`${entry.created_time}`
 													)
+												)}
+												{user?.uid ===
+													entry.properties.uid
+														.rich_text[0]
+														.plain_text && (
+													<ActionIcon
+														color='red'
+														radius='xl'
+														onClick={() =>
+															handleDelete(
+																entry.id
+															)
+														}
+													>
+														<AiOutlineDelete />
+													</ActionIcon>
 												)}
 											</span>
 										</p>

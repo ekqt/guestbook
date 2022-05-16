@@ -72,6 +72,13 @@ export default async function handler(req: any, res: any) {
 		const response = await notion.pages.create(entry);
 
 		res.status(200).json(response);
+	} else if (req.method === "DELETE") {
+		const pageID = JSON.parse(req.body);
+		const notion = new Client({ auth: `${process.env.NOTION_KEY}` });
+		const response = await notion.blocks.delete({
+			block_id: pageID,
+		  });
+		res.status(200).json(response);
 	} else {
 		res.status(200).json("Hello! This is a POST API route.");
 	}
