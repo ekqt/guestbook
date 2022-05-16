@@ -19,30 +19,36 @@ import { v4 as uuidv4 } from "uuid";
 
 import Image from "next/image";
 
-import {
-	Button,
-	Textarea,
-	Affix,
-	Transition,
-	ActionIcon,
-	LoadingOverlay,
-} from "@mantine/core";
+import { Alert, Button, Textarea, LoadingOverlay } from "@mantine/core";
 
 import { Table } from "@mantine/core";
 
-import { AiOutlineGoogle, AiOutlineUser, AiOutlineSend } from "react-icons/ai";
+import {
+	AiOutlineInfoCircle,
+	AiOutlineGoogle,
+	AiOutlineSend,
+} from "react-icons/ai";
 import { BiMessageSquare } from "react-icons/bi";
 import { FaQuoteLeft } from "react-icons/fa";
 
+// const firebaseConfig = {
+// 	apiKey: "AIzaSyA-aSeNub10Eivj0o70oOv3dBI8FBYKz4U",
+// 	authDomain: "auth-demo-4928e.firebaseapp.com",
+// 	projectId: "auth-demo-4928e",
+// 	storageBucket: "auth-demo-4928e.appspot.com",
+// 	messagingSenderId: "994626472083",
+// 	appId: "1:994626472083:web:eae7fd2238e7147d36a566",
+// 	measurementId: "G-9M5ZR87DB4",
+// };
+
 const firebaseConfig = {
-	apiKey: "AIzaSyA-aSeNub10Eivj0o70oOv3dBI8FBYKz4U",
-	authDomain: "auth-demo-4928e.firebaseapp.com",
-	projectId: "auth-demo-4928e",
-	storageBucket: "auth-demo-4928e.appspot.com",
-	messagingSenderId: "994626472083",
-	appId: "1:994626472083:web:eae7fd2238e7147d36a566",
-	measurementId: "G-9M5ZR87DB4",
-};
+	apiKey: "AIzaSyDB3a6IbflnLS9kR4aBaXhPSMoReT561zk",
+	authDomain: "hector-sosa.firebaseapp.com",
+	projectId: "hector-sosa",
+	storageBucket: "hector-sosa.appspot.com",
+	messagingSenderId: "1021871539855",
+	appId: "1:1021871539855:web:073f2305042bf9e7e412fa"
+  };
 
 const app = initializeApp(firebaseConfig);
 const provider = new GoogleAuthProvider();
@@ -67,8 +73,13 @@ const Guestbook: NextPage = ({ database }: any) => {
 		onAuthStateChanged(auth, (user) => {
 			if (user) {
 				const { displayName, email, photoURL, uid } = user;
-				const userData = { displayName, email, photoURL, uid } as UserType;
-				setUser(userData)
+				const userData = {
+					displayName,
+					email,
+					photoURL,
+					uid,
+				} as UserType;
+				setUser(userData);
 			} else {
 				setUser(null);
 			}
@@ -98,7 +109,8 @@ const Guestbook: NextPage = ({ database }: any) => {
 		setComment(value);
 	};
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (e: any) => {
+		e.preventDefault();
 		if (user) {
 			try {
 				setLoader(true);
@@ -126,7 +138,14 @@ const Guestbook: NextPage = ({ database }: any) => {
 
 	return (
 		<div className={styles.container}>
-			<Meta title={"Guestbook"} description={"Leave a comment below. It could be anything – appreciation, information, wisdom, or even humor. Surprise me!"} url={"/guestbook"} image={"./guestbook.png"} />
+			<Meta
+				title={"Guestbook"}
+				description={
+					"Leave a comment below. It could be anything – appreciation, information, wisdom, or even humor. Surprise me!"
+				}
+				url={"/guestbook"}
+				image={"./guestbook.png"}
+			/>
 
 			<main className={styles.main}>
 				<section>
@@ -149,68 +168,82 @@ const Guestbook: NextPage = ({ database }: any) => {
 							}}
 						/>
 						{!user ? (
-							<Button
-								onClick={signInWithGoogle}
-								leftIcon={<AiOutlineGoogle />}
-								classNames={{ root: styles.button }}
-								size='md'
-								variant='gradient'
-								gradient={{ from: "teal", to: "blue" }}
-							>
-								Sign In with Google
-							</Button>
-						) : (
 							<>
-								<Textarea
-									name='comment'
-									onChange={handleChange}
-									value={comment}
+								<Alert
 									classNames={{
-										wrapper: styles["textarea-message"],
+										root: styles.alert,
+										icon: styles['alert-icon'],
+										title: styles["alert-title"],
 									}}
-									icon={<BiMessageSquare />}
-									size='md'
-									aria-label='Textarea for message'
-									placeholder='Your message...'
-									required
-									autosize
-									minRows={1}
-								/>
+									icon={<AiOutlineInfoCircle size={16} />}
+									title="Sign in with Google first and don't worry! Your information is only used for
+									your comment!"
+									color='blue'
+								>
+									{""}
+								</Alert>
 								<Button
-									onClick={signOutWithGoogle}
+									onClick={signInWithGoogle}
 									leftIcon={<AiOutlineGoogle />}
 									classNames={{ root: styles.button }}
 									size='md'
 									variant='gradient'
-									gradient={{
-										from: "#ed6ea0",
-										to: "#ec8c69",
-										deg: 35,
-									}}
+									gradient={{ from: "teal", to: "blue" }}
 								>
-									Sign Out
+									Sign In with Google
 								</Button>
+							</>
+						) : (
+							<>
+								<form>
+									<Textarea
+										name='comment'
+										onChange={handleChange}
+										value={comment}
+										classNames={{
+											wrapper: styles["textarea-message"],
+										}}
+										icon={<BiMessageSquare />}
+										size='md'
+										aria-label='Textarea for message'
+										placeholder={`Hi, ${user?.displayName
+											?.match(/.*\s/)
+											?.toString()
+											?.trim()}! Type your message here! ♥️`}
+										required
+										autosize
+										minRows={1}
+									/>
+									<Button
+										type='submit'
+										onClick={handleSubmit}
+										leftIcon={<AiOutlineSend />}
+										classNames={{ root: styles.button }}
+										size='md'
+										variant='gradient'
+										gradient={{ from: "blue", to: "green" }}
+										disabled={comment.length < 2}
+									>
+										Submit
+									</Button>
+									<Button
+										onClick={signOutWithGoogle}
+										leftIcon={<AiOutlineGoogle />}
+										classNames={{ root: styles.button }}
+										size='md'
+										variant='gradient'
+										gradient={{
+											from: "#ed6ea0",
+											to: "#ec8c69",
+											deg: 35,
+										}}
+									>
+										Sign Out
+									</Button>
+								</form>
 							</>
 						)}
 					</div>
-					<Affix position={{ bottom: 25, right: 25 }}>
-						<Transition
-							transition='slide-up'
-							mounted={comment.length > 2}
-						>
-							{(transitionStyles) => (
-								<ActionIcon
-									style={transitionStyles}
-									classNames={{ root: styles["action-icon"] }}
-									color='cyan'
-									variant='filled'
-									onClick={handleSubmit}
-								>
-									<AiOutlineSend />
-								</ActionIcon>
-							)}
-						</Transition>
-					</Affix>
 				</section>
 				<section>
 					<Table
@@ -259,11 +292,10 @@ const Guestbook: NextPage = ({ database }: any) => {
 														styles["guest-name"]
 													}
 												>
-													{
-														entry.properties.Guest
-															.rich_text[0]
-															.plain_text
-													}
+													{entry.properties.Guest.rich_text[0].plain_text
+														.match(/.*\s/)
+														.toString()
+														.trim()}
 												</span>
 												{" / "}
 												{Intl.DateTimeFormat("en-US", {
