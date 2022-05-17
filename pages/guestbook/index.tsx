@@ -21,7 +21,7 @@ import Image from "next/image";
 
 import { Alert, Button, Textarea, LoadingOverlay } from "@mantine/core";
 
-import { Table, ActionIcon } from "@mantine/core";
+import { Paper, Table, ActionIcon } from "@mantine/core";
 
 import {
 	AiOutlineInfoCircle,
@@ -250,118 +250,87 @@ const Guestbook: NextPage = ({ entryData }: any) => {
 					</div>
 				</section>
 				<section>
-					<Table
-						className={styles.table}
-						verticalSpacing='xs'
-						highlightOnHover
-					>
-						<tbody>
-							{entries
-								.filter(
-									(i: {
-										properties: {
-											Tags: { select: { name: string } };
-										};
-									}) =>
-										i.properties.Tags.select.name ===
-										"Pinned"
-								)
-								.map((entry: any) => (
-									<tr key={uuidv4()}>
-										<td className={styles.entry}>
-											{entry.properties.Tags.select
-												.name === "Pinned" && (
-												<p className={styles.pinned}>
-													<AiOutlinePushpin />
-													{
-														entry.properties.Tags
-															.select.name
-													}
-												</p>
-											)}
-											<p className={styles.comment}>
-												<FaQuoteLeft />
-												{
-													entry.properties.Comment
+					{entries
+						.filter(
+							(i: {
+								properties: {
+									Tags: { select: { name: string } };
+								};
+							}) => i.properties.Tags.select.name === "Pinned"
+						)
+						.map((entry: any) => (
+							<Paper
+								key={uuidv4()}
+								shadow='sm'
+								p='md'
+								style={{ marginBlockEnd: "0.5rem" }}
+							>
+								<p className={styles.pin}>
+									<AiOutlinePushpin />
+									{entry.properties.Tags.select.name}
+								</p>
+								<p className={styles.comment}>
+									<FaQuoteLeft />
+									{
+										entry.properties.Comment.rich_text[0]
+											.plain_text
+									}
+								</p>
+								<p className={styles.guest}>
+									<>
+										{entry.properties.photoURL.url && (
+											<Image
+												className={styles.avatar}
+												src={
+													entry.properties.photoURL
+														.url
+												}
+												alt={
+													entry.properties.Guest
 														.rich_text[0].plain_text
 												}
-											</p>
-											<p className={styles.guest}>
-												<>
-													{entry.properties.photoURL
-														.url && (
-														<Image
-															className={
-																styles.avatar
-															}
-															src={
-																entry.properties
-																	.photoURL
-																	.url
-															}
-															alt={
-																entry.properties
-																	.Guest
-																	.rich_text[0]
-																	.plain_text
-															}
-															height={28}
-															width={28}
-														/>
-													)}
-												</>
-												<span>
-													–
-													<span
-														className={
-															styles["guest-name"]
-														}
-													>
-														{entry.properties.Guest.rich_text[0].plain_text
-															.match(/.*\s/)
-															.toString()
-															.trim()}
-													</span>
-													{" / "}
-													{Intl.DateTimeFormat(
-														"en-US",
-														{
-															year: "2-digit",
-															month: "short",
-															day: "numeric",
-															hour: "numeric",
-															minute: "numeric",
-															second: "numeric",
-															hour12: false,
-														}
-													).format(
-														new Date(
-															`${entry.created_time}`
-														)
-													)}
-													{user?.uid ===
-														entry.properties.uid
-															.rich_text[0]
-															.plain_text && (
-														<ActionIcon
-															color='red'
-															radius='xl'
-															onClick={() =>
-																handleDelete(
-																	entry.id
-																)
-															}
-														>
-															<AiOutlineDelete />
-														</ActionIcon>
-													)}
-												</span>
-											</p>
-										</td>
-									</tr>
-								))}
-						</tbody>
-					</Table>
+												height={28}
+												width={28}
+											/>
+										)}
+									</>
+									<span>
+										–
+										<span className={styles["guest-name"]}>
+											{entry.properties.Guest.rich_text[0].plain_text
+												.match(/.*\s/)
+												.toString()
+												.trim()}
+										</span>
+										{" / "}
+										{Intl.DateTimeFormat("en-US", {
+											year: "2-digit",
+											month: "short",
+											day: "numeric",
+											hour: "numeric",
+											minute: "numeric",
+											second: "numeric",
+											hour12: false,
+										}).format(
+											new Date(`${entry.created_time}`)
+										)}
+										{user?.uid ===
+											entry.properties.uid.rich_text[0]
+												.plain_text && (
+											<ActionIcon
+												color='red'
+												radius='xl'
+												onClick={() =>
+													handleDelete(entry.id)
+												}
+											>
+												<AiOutlineDelete />
+											</ActionIcon>
+										)}
+									</span>
+								</p>
+							</Paper>
+						))}
 					<Table
 						className={styles.table}
 						verticalSpacing='xs'
