@@ -27,6 +27,7 @@ import {
 	AiOutlineInfoCircle,
 	AiOutlineGoogle,
 	AiOutlineSend,
+	AiOutlinePushpin,
 	AiOutlineDelete,
 } from "react-icons/ai";
 import { BiMessageSquare } from "react-icons/bi";
@@ -54,9 +55,9 @@ type UserType = {
 	uid: string;
 };
 
-const Guestbook: NextPage = ({ database }: any) => {
+const Guestbook: NextPage = ({ entryData }: any) => {
 	const [user, setUser] = useState<UserType | null>(null);
-	const [entries, setEntries] = useState(database.results);
+	const [entries, setEntries] = useState(entryData);
 	const [comment, setComment] = useState("");
 	const [loader, setLoader] = useState(false);
 
@@ -255,86 +256,212 @@ const Guestbook: NextPage = ({ database }: any) => {
 						highlightOnHover
 					>
 						<tbody>
-							{entries.map((entry: any) => (
-								<tr key={uuidv4()}>
-									<td className={styles.entry}>
-										<p className={styles.comment}>
-											<FaQuoteLeft />
-											{
-												entry.properties.Comment
-													.rich_text[0].plain_text
-											}
-										</p>
-										<p className={styles.guest}>
-											<>
-												{entry.properties.photoURL
-													.url && (
-													<Image
-														className={
-															styles.avatar
-														}
-														src={
-															entry.properties
-																.photoURL.url
-														}
-														alt={
-															entry.properties
-																.Guest
-																.rich_text[0]
-																.plain_text
-														}
-														height={28}
-														width={28}
-													/>
-												)}
-											</>
-											<span>
-												–
-												<span
-													className={
-														styles["guest-name"]
+							{entries
+								.filter(
+									(i: {
+										properties: {
+											Tags: { select: { name: string } };
+										};
+									}) =>
+										i.properties.Tags.select.name ===
+										"Pinned"
+								)
+								.map((entry: any) => (
+									<tr key={uuidv4()}>
+										<td className={styles.entry}>
+											{entry.properties.Tags.select
+												.name === "Pinned" && (
+												<p className={styles.pinned}>
+													<AiOutlinePushpin />
+													{
+														entry.properties.Tags
+															.select.name
 													}
-												>
-													{entry.properties.Guest.rich_text[0].plain_text
-														.match(/.*\s/)
-														.toString()
-														.trim()}
-												</span>
-												{" / "}
-												{Intl.DateTimeFormat("en-US", {
-													year: "2-digit",
-													month: "short",
-													day: "numeric",
-													hour: "numeric",
-													minute: "numeric",
-													second: "numeric",
-													hour12: false,
-												}).format(
-													new Date(
-														`${entry.created_time}`
-													)
-												)}
-												{user?.uid ===
-													entry.properties.uid
-														.rich_text[0]
-														.plain_text && (
-													<ActionIcon
-														color='red'
-														radius='xl'
-														onClick={() =>
-															handleDelete(
-																entry.id
-															)
+												</p>
+											)}
+											<p className={styles.comment}>
+												<FaQuoteLeft />
+												{
+													entry.properties.Comment
+														.rich_text[0].plain_text
+												}
+											</p>
+											<p className={styles.guest}>
+												<>
+													{entry.properties.photoURL
+														.url && (
+														<Image
+															className={
+																styles.avatar
+															}
+															src={
+																entry.properties
+																	.photoURL
+																	.url
+															}
+															alt={
+																entry.properties
+																	.Guest
+																	.rich_text[0]
+																	.plain_text
+															}
+															height={28}
+															width={28}
+														/>
+													)}
+												</>
+												<span>
+													–
+													<span
+														className={
+															styles["guest-name"]
 														}
 													>
-														<AiOutlineDelete />
-													</ActionIcon>
-												)}
-											</span>
-										</p>
-									</td>
-								</tr>
-							))}
+														{entry.properties.Guest.rich_text[0].plain_text
+															.match(/.*\s/)
+															.toString()
+															.trim()}
+													</span>
+													{" / "}
+													{Intl.DateTimeFormat(
+														"en-US",
+														{
+															year: "2-digit",
+															month: "short",
+															day: "numeric",
+															hour: "numeric",
+															minute: "numeric",
+															second: "numeric",
+															hour12: false,
+														}
+													).format(
+														new Date(
+															`${entry.created_time}`
+														)
+													)}
+													{user?.uid ===
+														entry.properties.uid
+															.rich_text[0]
+															.plain_text && (
+														<ActionIcon
+															color='red'
+															radius='xl'
+															onClick={() =>
+																handleDelete(
+																	entry.id
+																)
+															}
+														>
+															<AiOutlineDelete />
+														</ActionIcon>
+													)}
+												</span>
+											</p>
+										</td>
+									</tr>
+								))}
+						</tbody>
+					</Table>
+					<Table
+						className={styles.table}
+						verticalSpacing='xs'
+						highlightOnHover
+					>
+						<tbody>
+							{entries
+								.filter(
+									(i: {
+										properties: {
+											Tags: { select: { name: string } };
+										};
+									}) =>
+										i.properties.Tags.select.name !==
+										"Pinned"
+								)
+								.map((entry: any) => (
+									<tr key={uuidv4()}>
+										<td className={styles.entry}>
+											<p className={styles.comment}>
+												<FaQuoteLeft />
+												{
+													entry.properties.Comment
+														.rich_text[0].plain_text
+												}
+											</p>
+											<p className={styles.guest}>
+												<>
+													{entry.properties.photoURL
+														.url && (
+														<Image
+															className={
+																styles.avatar
+															}
+															src={
+																entry.properties
+																	.photoURL
+																	.url
+															}
+															alt={
+																entry.properties
+																	.Guest
+																	.rich_text[0]
+																	.plain_text
+															}
+															height={28}
+															width={28}
+														/>
+													)}
+												</>
+												<span>
+													–
+													<span
+														className={
+															styles["guest-name"]
+														}
+													>
+														{entry.properties.Guest.rich_text[0].plain_text
+															.match(/.*\s/)
+															.toString()
+															.trim()}
+													</span>
+													{" / "}
+													{Intl.DateTimeFormat(
+														"en-US",
+														{
+															year: "2-digit",
+															month: "short",
+															day: "numeric",
+															hour: "numeric",
+															minute: "numeric",
+															second: "numeric",
+															hour12: false,
+														}
+													).format(
+														new Date(
+															`${entry.created_time}`
+														)
+													)}
+													{user?.uid ===
+														entry.properties.uid
+															.rich_text[0]
+															.plain_text && (
+														<ActionIcon
+															color='red'
+															radius='xl'
+															onClick={() =>
+																handleDelete(
+																	entry.id
+																)
+															}
+														>
+															<AiOutlineDelete />
+														</ActionIcon>
+													)}
+												</span>
+											</p>
+										</td>
+									</tr>
+								))}
 						</tbody>
 					</Table>
 				</section>
@@ -350,11 +477,29 @@ export const getStaticProps = async () => {
 	const databaseID = `${process.env.NOTION_GUESTBOOK_DATABASE_ID}`;
 	const database = await notion.databases.query({
 		database_id: databaseID,
+		filter: {
+			or: [
+				{
+					property: "Tags",
+					select: {
+						equals: "Visible",
+					},
+				},
+				{
+					property: "Tags",
+					select: {
+						equals: "Pinned",
+					},
+				},
+			],
+		},
 	});
+
+	const entryData = database.results;
 
 	return {
 		props: {
-			database,
+			entryData,
 		},
 		revalidate: 60,
 	};

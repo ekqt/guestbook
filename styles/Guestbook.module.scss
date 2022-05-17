@@ -54,6 +54,14 @@
 	margin-block: 0 1.5rem;
 }
 
+.pinned {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	color: darkslategray;
+	margin-block: 0.5rem 0;
+}
+
 .comment,
 .guest {
 	margin-block: 0.5rem;
